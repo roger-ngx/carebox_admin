@@ -4,9 +4,9 @@ import AppDrawer from "./AppDrawer"
 const Layout = ({children}) => {
 
     return (
-        <div>
+        <div style={{width: '100vw', height: '100vh'}}>
             <AppBar />
-            <div style={{display: 'flex', flexDirection: 'row'}}>
+            <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
                 <AppDrawer />
                 {children}
             </div>

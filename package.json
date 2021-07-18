@@ -13,6 +13,8 @@
     "@material-ui/data-grid": "^4.0.0-alpha.33",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "*",
+    "firebase": "^8.7.1",
+    "lodash": "^4.17.21",
     "next": "11.0.1",
     "react": "17.0.2",
     "react-dom": "17.0.2"

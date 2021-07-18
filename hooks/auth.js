@@ -3,7 +3,8 @@ import firebase from '../firebase/init';
 
 const formatAuthUser = user => ({
     uid: user.uid,
-    phoneNumber: user.phoneNumber
+    phoneNumber: user.phoneNumber,
+    displayName: user.displayName
 });
 
 export default function useFirebaseAuth() {
@@ -15,17 +16,17 @@ export default function useFirebaseAuth() {
         setAuthLoading(true);
     };
 
-    const authStateChanged = async (authState) => {
-        if (!authState) {
+    const authStateChanged = async (user) => {
+        if (!user) {
           setAuthUser(null)
           setAuthLoading(false);
           return;
         }
 
-        console.log(authState);
+        console.log(user);
 
         setAuthLoading(true);
-        var formattedUser = formatAuthUser(authState);
+        var formattedUser = formatAuthUser(user);
         setAuthUser(formattedUser);
         setAuthLoading(false);
     };

@@ -11,8 +11,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 
-const UserProfileDialog = ({open, setOpen}) => {
+const UserProfileDialog = ({data, open, setOpen}) => {
+    if(!data) return null;
 
+    const { nickName, gender, phoneNumber, yearsOnJob, department, lastLoginTime, registeredIdeaCount, registeredCommentCount } = data;
     return (
         <Dialog maxWidth='lg' open={open} onClose={() => setOpen(false)} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">회원 정보</DialogTitle>
@@ -23,10 +25,10 @@ const UserProfileDialog = ({open, setOpen}) => {
                     </div>
                     <div style={{display: 'flex', flexDirection: 'column', marginLeft: 16}}>
                         <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                            <span style={{fontSize: 20, fontWeight: 'bold', marginRight: 8}}>홍길동</span>
+                            <span style={{fontSize: 20, fontWeight: 'bold', marginRight: 12}}>{nickName}</span>
                             <div style={{display: 'flex', flexDirection: 'column'}}>
-                                <span>남/ 1년차 / 병동</span>
-                                <span style={{color: '#797979'}}>010 8111 1111</span>
+                                <span>{gender==='M' ? '남' : '여'}/ {yearsOnJob}년차 / {department}</span>
+                                <span style={{color: '#797979', marginTop: 8}}>{phoneNumber}</span>
                             </div>
                         </div>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 16}}>
@@ -36,7 +38,7 @@ const UserProfileDialog = ({open, setOpen}) => {
                             </div>
                             <div style={{display: 'flex', flexDirection: 'row'}}>
                                 <span style={{color: '#797979', marginRight: 4}}>최근 접속</span>
-                                <span>21.03.02 17:00</span>
+                                <span>{lastLoginTime}</span>
                             </div>
                         </div>
 
@@ -52,16 +54,16 @@ const UserProfileDialog = ({open, setOpen}) => {
                     </div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'column', borderTopWidth: 1, borderTopStyle: 'solid', borderTopColor: '#BEBEBE', padding: '20px 0'}}>
-                    <span>등록 아이디어  12개</span>
-                    <span>등록한 코멘트 12개</span>
+                    <span>등록 아이디어  {registeredIdeaCount}개</span>
+                    <span style={{marginTop: 8}}>등록한 코멘트 {registeredCommentCount}개</span>
                 </div>
                 
             </DialogContent>
-            <DialogActions>
-                <Button onClick={() => setOpen(false)} variant='outlined'>
+            <DialogActions style={{padding: '16px 24px'}}>
+                <Button onClick={() => setOpen(false)} variant='outlined' style={{width: 100}}>
                     취소
                 </Button>
-                <Button onClick={() => setOpen(false)} variant='contained' color="primary">
+                <Button onClick={() => setOpen(false)} variant='contained' color="primary" style={{width: 100}}>
                     확인
                 </Button>
             </DialogActions>

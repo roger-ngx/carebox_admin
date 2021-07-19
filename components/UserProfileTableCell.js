@@ -14,7 +14,7 @@ const UserProfileTableCell = ({user}) => {
                 <span><span style={{color: '#797979', marginRight: 8}}>회원 등급</span><span>새싹</span></span>
                 <span>{user.gender==='M' ? '남' : '여'}/ {user.yearsOnJob}년차 / {user.department}</span>
                 <span>{user.phoneNumber}</span>
-                <a style={{color: '#1379FF', cursor:'pointer'}}>프로필 상세 ></a>
+                <a style={{color: '#1379FF', cursor:'pointer'}}>{`프로필 상세 >`}</a>
             </div>
         </div>
     )

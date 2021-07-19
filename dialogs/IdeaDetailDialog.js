@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image'
 import { Rating } from '@material-ui/lab';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,25 +7,39 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import { join } from 'lodash';
 
-import { ArrowForwardIos, Star } from '@material-ui/icons';
+import { ArrowForwardIos, Category, Star } from '@material-ui/icons';
 import CommentsDialog from './CommentsDialog';
 import { IconButton } from '@material-ui/core';
 import PickedUsersDialog from './PickedUsersDialog';
+import { getIdeaComments } from '../firebase/ideas';
 
 
 const Item = ({leftText, rightText}) => (
     <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '12px 0'}}>
         <span style={{width: 120, textAlign: 'right', color: '#878787'}}>{leftText}</span>
         <span style={{color: '#C4C4C4', margin: '0 8px'}}>|</span>
-        <span style={{color: '#323030'}}>{rightText}</span>
+        <span style={{flex: 1, color: '#323030'}}>{rightText}</span>
     </div>
 )
 
-const IdeaDetailDialog = ({open, setOpen}) => {
+const IdeaDetailDialog = ({data, open, setOpen}) => {
+    if(!data) return null;
+
+    console.log(data);
+
+    const { id, owner, nickName, subject, category, scampers, detail } = data;
 
     const [ showingCommentList, setShowingCommentList ] = useState(false);
     const [ openPickedUsers, setOpenPickedUsers ] = useState(false);
+    const [ comments, setComments ] = useState([]);
+
+    useEffect(() => {
+        if(id){
+            getIdeaComments(id).then(setComments);
+        }
+    }, [id]);
 
     return (
         <>
@@ -33,17 +47,17 @@ const IdeaDetailDialog = ({open, setOpen}) => {
             <DialogTitle id="form-dialog-title">등록된 코멘트</DialogTitle>
             <DialogContent>
                 <div style={{display: 'flex', flexDirection: 'row'}}>
-                    <div style={{display: 'flex', flexDirection: 'column', marginRight: 20}}>
+                    <div style={{display: 'flex', flexDirection: 'column', flex: 1, marginRight: 20}}>
                         <div style={{display: 'flex', flexDirection: 'row', paddingBottom: 20}}>
                             <div style={{width: 68, height: 68}}>
                                 <Image src='/assets/icons/ic_profile.png' width={68} height={68} alt=''/>
                             </div>
                             <div style={{display: 'flex', flexDirection: 'column', marginLeft: 16}}>
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                                    <span style={{fontSize: 20, fontWeight: 'bold', marginRight: 8}}>홍길동</span>
+                                    <span style={{fontSize: 20, fontWeight: 'bold', marginRight: 8}}>{nickName}</span>
                                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                                        <span>남/ 1년차 / 병동</span>
-                                        <span style={{color: '#797979'}}>010 8111 1111</span>
+                                        <span>{owner.gender==='M' ? '남' : '여'}/ {owner.yearsOnJob}년차 / {owner.department}</span>
+                                        <span style={{color: '#797979'}}>{owner.phoneNumber}</span>
                                     </div>
                                 </div>
                                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 16}}>
@@ -68,10 +82,10 @@ const IdeaDetailDialog = ({open, setOpen}) => {
                                 </div>
                             </div>
                         </div>
-                        <div style={{display: 'flex', flexDirection: 'column', borderTopWidth: 1, borderTopStyle: 'solid', borderTopColor: '#BEBEBE', padding: '20px 0'}}>
+                        <div style={{display: 'flex', flexDirection: 'column', flex: 1, borderTopWidth: 1, borderTopStyle: 'solid', borderTopColor: '#BEBEBE', padding: '20px 0'}}>
                             <Item
                                 leftText='카테고리'
-                                rightText='기계'
+                                rightText={category}
                             />
                             <Item
                                 leftText='아이디어 종류'
@@ -79,25 +93,25 @@ const IdeaDetailDialog = ({open, setOpen}) => {
                             />
                             <Item
                                 leftText='스캠퍼'
-                                rightText='P 용도의 전환 / R 역발상'
+                                rightText={scampers}
                             />
                             <Divider />
                             <Item
                                 leftText='제목'
-                                rightText='간호 아이디어 공유합니다 많이 참여해주세요!'
+                                rightText={subject}
                             />
                             <Divider />
                             <Item
                                 leftText='구체적 대상'
-                                rightText='산소 마스크'
+                                rightText={detail.object}
                             />
                             <Item
                                 leftText='구체적 상황'
-                                rightText='산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격'
+                                rightText={detail.situation}
                             />
                             <Item
                                 leftText='해결 방법'
-                                rightText='1회용 필터를 갈아 끼우는 형태로 제안합니다.'
+                                rightText={join(detail.solution, '\n')}
                             />
                             <Divider />
     
@@ -144,7 +158,7 @@ const IdeaDetailDialog = ({open, setOpen}) => {
                             <span style={{fontWeight: 'bold', fontSize: 15}}>등록된 코멘트</span>
                             <Divider style={{margin: '8px 0'}}/>
                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                <span>5개</span>
+                                <span>{comments.length}개</span>
                                 <IconButton onClick={() => setShowingCommentList(true)}>
                                     <ArrowForwardIos color='#686868' style={{fontSize:16}}/>
                                 </IconButton>
@@ -176,7 +190,7 @@ const IdeaDetailDialog = ({open, setOpen}) => {
         </Dialog>
         {
             showingCommentList &&
-            <CommentsDialog open={showingCommentList} setOpen={setShowingCommentList}/>
+            <CommentsDialog open={showingCommentList} setOpen={setShowingCommentList} comments={comments}/>
         }
         {
             openPickedUsers &&

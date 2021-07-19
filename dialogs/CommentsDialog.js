@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -13,28 +13,66 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { map } from 'lodash';
 
 import CommentRepliesDialog from './CommentRepliesDialog';
 import UserProfileTableCell from '../components/UserProfileTableCell';
+import { getCommentReplies } from '../firebase/ideas';
 
-const Item = ({leftText, rightText}) => (
-    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '12px 0'}}>
-        <span style={{width: 120, textAlign: 'right', color: '#878787'}}>{leftText}</span>
-        <span style={{color: '#C4C4C4', margin: '0 8px'}}>|</span>
-        <span style={{color: '#323030'}}>{rightText}</span>
-    </div>
-)
+const Comment = ({comment, onOpenReplies}) => {
+    const [ replies, setReplies ] = useState([]);
+
+    useEffect(() => {
+        if(comment){
+            getCommentReplies({ideaId: comment.ideaId, commentId: comment.id}).then(setReplies);
+        }
+    }, [comment]);
+
+    return (<TableRow>
+        <TableCell component="th" scope="row" style={{verticalAlign: 'top'}}>
+            <UserProfileTableCell user={comment.owner}/>
+        </TableCell>
+        <TableCell align="left" style={{verticalAlign: 'top'}}>
+            <div style={{display: 'flex', flexDirection: 'column'}}>
+                <span><span style={{fontWeight: 'bold', fontSize: 15}}>종합평점</span> <span style={{fontWeight: 'bold', color: '#1379FF'}}>4.0점</span></span>
+                <span><span>실용성</span> <span style={{color: '#898989'}}>{comment.practicalityRate}</span></span>
+                <span><span>창의성</span> <span style={{color: '#898989'}}>{comment.creativityRate}</span></span>
+                <span><span>가치성</span> <span style={{color: '#898989'}}>{comment.valuableRate}</span></span>
+            </div>
+        </TableCell>
+        <TableCell align="left" style={{verticalAlign: 'top'}}>
+            <div style={{display: 'flex', flexDirection: 'column'}}>
+                <span>{comment.scamper}</span>
+            </div>
+        </TableCell>
+        <TableCell align="left"  style={{maxWidth: 200, verticalAlign: 'top'}}>
+            <span>
+                {comment.content}
+            </span>
+        </TableCell>
+        <TableCell align="left" style={{verticalAlign: 'top'}}>
+            <a
+                style={{padding: 8, backgroundColor: '#1379FF', color: 'white', cursor:'pointer'}}
+                onClick={() => onOpenReplies(replies)}
+                disabled={replies.length===0}
+            >
+                댓글 {replies.length}개 보기 
+            </a>
+        </TableCell>
+    </TableRow>)
+}
 
 const useStyles = makeStyles({
     table: {
       minWidth: 800,
     },
-  });
+});
 
-const CommentsDialog = ({open, setOpen}) => {
+const CommentsDialog = ({open, setOpen, comments}) => {
     const classes = useStyles();
 
     const [ openRepliesDialog, setOpenRepliesDialog ] = useState(false);
+    const [ currentReplies, setCurrentReplies ] = useState();
 
     return (
         <Dialog maxWidth='lg' open={open} onClose={() => setOpen(false)} aria-labelledby="form-dialog-title">
@@ -52,38 +90,17 @@ const CommentsDialog = ({open, setOpen}) => {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                <TableCell component="th" scope="row" style={{verticalAlign: 'top'}}>
-                                    <UserProfileTableCell />
-                                </TableCell>
-                                <TableCell align="left" style={{verticalAlign: 'top'}}>
-                                    <div style={{display: 'flex', flexDirection: 'column'}}>
-                                        <span><span style={{fontWeight: 'bold', fontSize: 15}}>종합평점</span> <span style={{fontWeight: 'bold', color: '#1379FF'}}>4.0점</span></span>
-                                        <span><span>실용성</span> <span style={{color: '#898989'}}>5</span></span>
-                                        <span><span>창의성</span> <span style={{color: '#898989'}}>3</span></span>
-                                        <span><span>가치성</span> <span style={{color: '#898989'}}>4</span></span>
-                                    </div>
-                                </TableCell>
-                                <TableCell align="left" style={{verticalAlign: 'top'}}>
-                                    <div style={{display: 'flex', flexDirection: 'column'}}>
-                                        <span>P 용도의 전환</span>
-                                        <span>R 역발상</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell align="left"  style={{maxWidth: 200, verticalAlign: 'top'}}>
-                                    <span>
-                                        산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격...
-                                    </span>
-                                </TableCell>
-                                <TableCell align="left" style={{verticalAlign: 'top'}}>
-                                    <a
-                                        style={{padding: 8, backgroundColor: '#1379FF', color: 'white', cursor:'pointer'}}
-                                        onClick={() => setOpenRepliesDialog(true)}
-                                    >
-                                        댓글 1개 보기 
-                                    </a>
-                                </TableCell>
-                            </TableRow>
+                            {
+                                map(comments, comment => (
+                                    <Comment
+                                        comment={comment}
+                                        onOpenReplies={(replies) => {
+                                            setOpenRepliesDialog(true);
+                                            setCurrentReplies(replies);
+                                        }}
+                                    />
+                                ))
+                            }
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -101,6 +118,7 @@ const CommentsDialog = ({open, setOpen}) => {
                 <CommentRepliesDialog
                     open={openRepliesDialog}
                     setOpen={setOpenRepliesDialog}
+                    replies={currentReplies}
                 />
             }
         </Dialog>

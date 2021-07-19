@@ -20,6 +20,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { map } from 'lodash';
 
 import { Close } from '@material-ui/icons';
 import UserProfileTableCell from '../components/UserProfileTableCell';
@@ -31,7 +32,7 @@ const useStyles = makeStyles({
     },
   });
 
-const CommentRepliesDialog = ({open, setOpen}) => {
+const CommentRepliesDialog = ({replies, open, setOpen}) => {
     const classes = useStyles();
 
     return (
@@ -54,14 +55,18 @@ const CommentRepliesDialog = ({open, setOpen}) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                <TableCell component="th" scope="row" style={{verticalAlign: 'top'}}>
-                                    <UserProfileTableCell />
-                                </TableCell>
-                                <TableCell align="left" style={{verticalAlign: 'top'}}>
-                                    <span>진짜 기발한 아이디어 같아요 !!</span>
-                                </TableCell>
-                            </TableRow>
+                        {
+                            map(replies, reply => (
+                                <TableRow>
+                                    <TableCell component="th" scope="row" style={{verticalAlign: 'top'}}>
+                                        <UserProfileTableCell user={reply.owner}/>
+                                    </TableCell>
+                                    <TableCell align="left" style={{verticalAlign: 'top'}}>
+                                        <span>{reply.comment}</span>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        }
                         </TableBody>
                     </Table>
                 </TableContainer>

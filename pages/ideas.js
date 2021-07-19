@@ -1,15 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DataGrid } from '@material-ui/data-grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import { map } from 'lodash';
 
 import CBSelect from '../components/CBSelect';
 import Layout from '../components/Layout';
 import SearchInput from '../components/SearchInput';
 import IdeaDetailDialog from '../dialogs/IdeaDetailDialog';
+import { getIdeas } from '../firebase/ideas';
+import { Idea } from '../models/Idea';
 
 const columns = [
-    { field: 'id', headerName: '번호', width: 90 },
+    { field: 'id', headerName: '번호', width: 200 },
     {
       field: 'ideaType',
       headerName: '아이디어 구분',
@@ -29,46 +32,61 @@ const columns = [
       editable: true,
     },
     {
-      field: 'title',
+      field: 'subject',
       headerName: '제목',
       width: 350,
     },
     {
-        field: 'scamper',
-        headerName: 'scamper',
+        field: 'scampers',
+        headerName: 'scampers',
         width: 250,
         editable: true,
     },
     {
-        field: 'createdAt',
+        field: 'registrationDate',
         headerName: '등록일',
         width: 250,
         editable: true,
     },
     {
-        field: 'pickedMembers',
+        field: 'pickedUsers',
         headerName: 'pick된 회원',
         width: 250,
         editable: true,
     },   
 ];
 
-const rows = [
-    { id: 100, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-    { id: 101, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-    { id: 102, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-    { id: 103, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-    { id: 104, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-    { id: 105, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-    { id: 106, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-    { id: 107, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-    { id: 108, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-    { id: 109, ideaType: '일반', nickName: '홍길동', category: '기계', title: '간호 아이디어 공유합니다 많이 참여해...', scamper: 'p 용도의 전환, s 역발상', createdAt: '2021.04.26 14:33', pickedMembers: '간호왕, 왕왕왕, ㅇㅇㅇ'},
-];
-
 const IdeaListPage = () => {
 
     const [ open, setOpen ] = useState(false);
+    const [ ideas, setIdeas ] = useState();
+    const [ formattedIdeas, setFormattedIdeas ] = useState([]);
+    const [ selectedRow, setSelectedRow ] = useState();
+
+    useEffect(() => {
+        getIdeas().then(setIdeas);
+    }, []);
+
+    useEffect(() => {
+        const data = map(ideas, idea => {
+            const row = new Idea(idea);
+
+            return ({
+                id: row.id,
+                ideaType: '일반',
+                nickName: row.ownerNickname,
+                category: row.category,
+                subject: row.subject,
+                scampers: row.scampers,
+                registrationDate: row.registrationDate,
+                pickedUsers: row.pickedUsers,
+                owner: row.owner,
+                detail: row.detail
+            });
+        });
+
+        setFormattedIdeas(data);
+    }, [ideas]);
 
     return (
         <Layout>
@@ -89,14 +107,17 @@ const IdeaListPage = () => {
                 </div>
                 <div style={{ flex: 1, marginTop: 24 }}>
                     <DataGrid
-                        rows={rows}
+                        rows={formattedIdeas}
                         columns={columns}
                         pageSize={10}
-                        onRowClick={() => setOpen(true)}
+                        onRowClick={(param) => {
+                            setOpen(true)
+                            setSelectedRow(param.row);
+                        }}
                     />
                 </div>
             </div>
-            <IdeaDetailDialog {...{open, setOpen}}/>
+            <IdeaDetailDialog {...{open, setOpen}} data={selectedRow}/>
         </Layout>
     )
 }

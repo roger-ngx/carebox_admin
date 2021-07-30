@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image'
 import { DataGrid } from '@material-ui/data-grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -9,15 +9,18 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
+import moment from 'moment';
+import { map } from 'lodash';
 
 import CBSelect from '../components/CBSelect';
 import Layout from '../components/Layout';
 import SearchInput from '../components/SearchInput';
 import UserProfileDialog from '../dialogs/UserProfileDialog';
 import NotificationMakingDialog from '../dialogs/NotificationMakingDialog';
+import { loadNotifications } from '../firebase/notifications';
 
 const columns = [
-    { field: 'id', headerName: '번호', width: 90 },
+    { field: 'id', headerName: '번호', width: 200 },
     {
         field: 'content',
         headerName: '내용',
@@ -47,6 +50,26 @@ const rows = [
 const NotificationListPage = () => {
 
     const [ openNotificationMaking, setOpenNotificationMaking ] = useState(false);
+    const [ notifications, setNotifications ] = useState([]);
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = async() => {
+        try{
+            const data = await loadNotifications();
+            setNotifications(map(data, 
+                ({id, content, createdAt}) => ({
+                    id,
+                    content,
+                    registrationDate: moment.unix(createdAt.seconds).format('YYYY.MM.DD HH:mm').toString()
+                })
+            ));
+        }catch(ex){
+            console.log(ex);
+        }
+    };
 
     return (
         <Layout>
@@ -68,7 +91,7 @@ const NotificationListPage = () => {
                 </div>
                 <div style={{ flex: 1, marginTop: 24 }}>
                     <DataGrid
-                        rows={rows}
+                        rows={notifications}
                         columns={columns}
                         pageSize={10}
                     />

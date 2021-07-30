@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import { TextField } from '@material-ui/core';
+import { TextField, CircularProgress } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/styles';
+import { addNotification } from '../firebase/notifications';
+import { isEmpty, trim } from 'lodash';
 
 const Input = withStyles(theme => ({
     root: {
@@ -21,7 +23,23 @@ const Input = withStyles(theme => ({
     }
 }))(TextField);
 
-const NotificationMakingDialog = ({open, setOpen}) => {
+const NotificationMakingDialog = ({open, setOpen, onSuccess}) => {
+
+    const [ notificationContent, setNotificationContent ] = useState();
+    const [ processing, setProcessing ] = useState(false);
+
+    const addNewNotification = async () => {
+        setProcessing(true);
+        try{
+            await addNotification(notificationContent);
+            onSuccess && onSuccess(notificationContent);
+            setOpen(false);
+        }catch(ex){
+            console.log(ex);
+            alert('error. plz try again');
+        }
+        setProcessing(false);
+    };
 
     return (
         <Dialog maxWidth='lg' open={open} onClose={() => setOpen(false)} aria-labelledby="form-dialog-title">
@@ -36,14 +54,30 @@ const NotificationMakingDialog = ({open, setOpen}) => {
                     }}
                     rows={5}
                     multiline
+                    value={notificationContent}
+                    onChange={e => setNotificationContent(trim(e.target.value))}
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setOpen(false)} variant='outlined'>
+                <Button
+                    onClick={() => setOpen(false)}
+                    variant='outlined'
+                    disabled={processing}
+                >
                     취소
                 </Button>
-                <Button onClick={() => setOpen(false)} variant='contained' color="primary">
-                    확인
+                <Button
+                    onClick={addNewNotification}
+                    variant='contained'
+                    color="primary"
+                    disabled={isEmpty(notificationContent) || processing}
+                >
+                    {
+                        processing ?
+                        <CircularProgress size={24} style={{color:'white'}} />
+                        :
+                        '확인'
+                    }
                 </Button>
             </DialogActions>
         </Dialog>

@@ -102,6 +102,7 @@ const NotificationListPage = () => {
                 <NotificationMakingDialog
                     open={openNotificationMaking}
                     setOpen={setOpenNotificationMaking}
+                    onSuccess={newNotification => setNotifications([newNotification, ...notifications])}
                 />
             }
         </Layout>

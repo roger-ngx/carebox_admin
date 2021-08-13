@@ -40,4 +40,8 @@ export class User{
     get lastLoginTime(){
         return this.user.updatedAt && moment.unix(this.user.updatedAt.seconds).format('YYYY-MM-DD HH:mm');
     }
+
+    get profileImageUrl(){
+        return this.user.profileImageUrl;
+    }
 }

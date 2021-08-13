@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { DataGrid } from '@material-ui/data-grid';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import UserGrade from '../components/UserGrade';
@@ -14,7 +9,7 @@ import UserGrade from '../components/UserGrade';
 const UserProfileDialog = ({data, open, setOpen, onUpdateGrade}) => {
     if(!data) return null;
 
-    const { id, grade, nickName, gender, phoneNumber, yearsOnJob, department, lastLoginTime, registeredIdeaCount, registeredCommentCount } = data;
+    const { id, grade, nickName, gender, phoneNumber, yearsOnJob, department, lastLoginTime, registeredIdeaCount, registeredCommentCount, profileImageUrl } = data;
 
     return (
         <Dialog maxWidth='lg' open={open} onClose={() => setOpen(false)} aria-labelledby="form-dialog-title">
@@ -22,7 +17,7 @@ const UserProfileDialog = ({data, open, setOpen, onUpdateGrade}) => {
             <DialogContent>
                 <div style={{display: 'flex', flexDirection: 'row', paddingBottom: 20}}>
                     <div style={{width: 68, height: 68}}>
-                        <Image src='/assets/icons/ic_profile.png' width={68} height={68} alt=''/>
+                        <img src={profileImageUrl || '/assets/icons/ic_profile.png'} width={68} height={68} alt=''/>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'column', marginLeft: 16}}>
                         <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>

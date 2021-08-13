@@ -116,7 +116,8 @@ const UserListPage = () => {
                 registeredCommentCount: 0,
                 registrationDate: row.registrationDate,
                 lastLoginTime: row.lastLoginTime,
-                grade: row.grade
+                grade: row.grade,
+                profileImageUrl: row.profileImageUrl
             });
         });
 

@@ -19,3 +19,26 @@ export const getUsers = async () => {
     }
     return [];
 };
+
+export const getUserById = async (uid) => {
+    try{
+        const ret = await firebase.firestore().collection('users').doc(uid).get();
+        return ({uid: ret.id,  ...ret.data()});
+    }catch(ex){
+        console.log('getUsers', ex);
+    }
+    return [];
+};
+
+export const changeUserGrade = async (uid, grade) => {
+    try{
+        await firebase.firestore().collection('users').doc(uid).update({
+            grade,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return true;
+    }catch(ex){
+        console.log('getUsers', ex);
+    }
+    return false;
+}

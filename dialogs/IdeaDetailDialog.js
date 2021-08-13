@@ -7,13 +7,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import { join } from 'lodash';
+import { join, throttle, size, reduce } from 'lodash';
 
 import { ArrowForwardIos, Category, Star } from '@material-ui/icons';
 import CommentsDialog from './CommentsDialog';
-import { IconButton } from '@material-ui/core';
+import { IconButton, CircularProgress } from '@material-ui/core';
 import PickedUsersDialog from './PickedUsersDialog';
 import { getIdeaComments } from '../firebase/ideas';
+import { changeUserGrade, getUserById } from '../firebase/users';
 
 
 const Item = ({leftText, rightText}) => (
@@ -29,17 +30,74 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
 
     console.log(data);
 
-    const { id, owner, nickName, subject, category, scampers, detail } = data;
+    const { id, owner, nickName, subject, category, scampers, detail, rating, pickedUsers } = data;
 
     const [ showingCommentList, setShowingCommentList ] = useState(false);
     const [ openPickedUsers, setOpenPickedUsers ] = useState(false);
     const [ comments, setComments ] = useState([]);
 
+    const [ userGrade, setUserGrade ] = useState();
+    const [ ideaOwner, setIdeaOwner ] = useState({});
+
+    const [ loading, setLoading ] = useState(false);
+
+    const [ overallRating, setOverallRate ] = useState({})
+
     useEffect(() => {
         if(id){
             getIdeaComments(id).then(setComments);
+            setUserGrade(owner.grade);
         }
     }, [id]);
+
+    useEffect(() => {
+        if(owner.uid){
+            loadIdeaOwner(owner.uid);
+        }
+    }, [owner]);
+
+    useEffect(() => {
+        const ratingSize = size(rating);
+        if(ratingSize > 0){
+
+            const overallRate = reduce(rating, (sum, rate) => {
+                sum.avg = sum.avg + rate.avgRating;
+                sum.creativity += rate.creativityRate;
+                sum.practicality += rate.practicalityRate;
+                sum.valuable += rate.valuableRate;
+
+                return sum;
+            }, {avg: 0, creativity: 0, practicality: 0, valuable: 0});
+
+
+            return setOverallRate({
+                avg: +(overallRate.avg/ratingSize).toFixed(1),
+                creativity: +(overallRate.creativity/ratingSize).toFixed(1),
+                practicality: +(overallRate.practicality/ratingSize).toFixed(1),
+                valuable: +(overallRate.valuable/ratingSize).toFixed(1)
+            })
+        }
+
+        return setOverallRate({avg: 0, creativity: 0, practicality: 0, valuable: 0});
+
+    }, [rating]);
+
+    const loadIdeaOwner = async (uid) => {
+        const user = await getUserById(uid);
+        setIdeaOwner(user);
+        setUserGrade(user.grade);
+    }
+
+    const changeGrade = async () => {
+        setLoading(true);
+        try{
+            await changeUserGrade(owner.uid, userGrade===1?2:1)
+            setUserGrade(userGrade===1?2:1);
+        }catch(ex){
+            console.log('changeGrade', ex);
+        }
+        setLoading(false);
+    }
 
     return (
         <>
@@ -50,14 +108,14 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                     <div style={{display: 'flex', flexDirection: 'column', flex: 1, marginRight: 20}}>
                         <div style={{display: 'flex', flexDirection: 'row', paddingBottom: 20}}>
                             <div style={{width: 68, height: 68}}>
-                                <Image src='/assets/icons/ic_profile.png' width={68} height={68} alt=''/>
+                                <img src={ideaOwner.profileImageUrl || '/assets/icons/ic_profile.png'} width={68} height={68} alt=''/>
                             </div>
                             <div style={{display: 'flex', flexDirection: 'column', marginLeft: 16}}>
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                                     <span style={{fontSize: 20, fontWeight: 'bold', marginRight: 8}}>{nickName}</span>
                                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                                        <span>{owner.gender==='M' ? '남' : '여'}/ {owner.yearsOnJob}년차 / {owner.department}</span>
-                                        <span style={{color: '#797979'}}>{owner.phoneNumber}</span>
+                                        <span>{ideaOwner.gender==='M' ? '남' : '여'}/ {ideaOwner.yearsOnJob}년차 / {ideaOwner.department}</span>
+                                        <span style={{color: '#797979'}}>{ideaOwner.phoneNumber}</span>
                                     </div>
                                 </div>
                                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 16}}>
@@ -74,10 +132,18 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 16}}>
                                     <div style={{display: 'flex', flexDirection: 'row', marginRight: 16}}>
                                         <span style={{color: '#797979', marginRight: 4}}>회원 등급</span>
-                                        <span>새싹</span>
+                                        <span>{userGrade === 1 ? '새싹' : '왕관'}</span>
                                     </div>
-                                    <div style={{backgroundColor: '#1379FF', padding: 4}}>
-                                        <span style={{color: 'white'}}>등급 up</span>
+                                    <div
+                                        style={{cursor: 'pointer', backgroundColor: '#1379FF', padding: 4, width: 80, textAlign: 'center'}}
+                                        onClick={throttle(changeGrade, 3000, {trailing: false})}
+                                    >
+                                        {
+                                            loading ?
+                                            <CircularProgress size={12} style={{color:'#fff'}} />
+                                            :
+                                            <span style={{color: 'white'}}>{userGrade === 1 ? '등급 up' : '등급 down'}</span>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -119,7 +185,7 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                     </div>
                     <div style={{display: 'flex', flexDirection: 'column', backgroundColor: '#EEF6FF', width: 300, padding: 20}}>
                         <div style={{marginBottom: 48}}>
-                            <span style={{display: 'flex', fontWeight: 'bold', fontSize: 15, alignItems: 'center'}}>총<Star style={{color: '#FFC700', marginLeft: 8}} /> 5.0</span>
+                            <span style={{display: 'flex', fontWeight: 'bold', fontSize: 15, alignItems: 'center'}}>총<Star style={{color: '#FFC700', marginLeft: 8}} /> {overallRating.avg}</span>
                             <Divider style={{margin: '8px 0'}}/>
                             <div style={{display: 'flex', flexDirection: 'column'}}>
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
@@ -127,30 +193,30 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                                     <Rating
                                         // disabled={true}
                                         readOnly={true}
-                                        value={3.5}
+                                        value={overallRating.practicality}
                                         style={{margin: '0 8px'}}
                                     />
-                                    <span>3.5</span>
+                                    <span>{overallRating.practicality}</span>
                                 </div>
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
-                                    <span>실용성</span>
+                                    <span>창의성</span>
                                     <Rating
                                         // disabled={true}
                                         readOnly={true}
-                                        value={3.5}
+                                        value={overallRating.creativity}
                                         style={{margin: '0 8px'}}
                                     />
-                                    <span>3.5</span>
+                                    <span>{overallRating.creativity}</span>
                                 </div>
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
-                                    <span>실용성</span>
+                                    <span>가치성</span>
                                     <Rating
                                         // disabled={true}
                                         readOnly={true}
-                                        value={3.5}
+                                        value={overallRating.valuable}
                                         style={{margin: '0 8px'}}
                                     />
-                                    <span>3.5</span>
+                                    <span>{overallRating.valuable}</span>
                                 </div>
                             </div>
                         </div>
@@ -169,8 +235,8 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                             <span style={{fontWeight: 'bold', fontSize: 15}}>PICK</span>
                             <Divider style={{margin: '8px 0'}}/>
                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                <span>5명</span>
-                                <IconButton onClick={() => setOpenPickedUsers(true)}>
+                                <span>{size(pickedUsers)}명</span>
+                                <IconButton disabled={size(pickedUsers)===0} onClick={() => setOpenPickedUsers(true)}>
                                     <ArrowForwardIos color='#686868' style={{fontSize:16}}/>
                                 </IconButton>
                             </div>
@@ -180,9 +246,9 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                 
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setOpen(false)} variant='outlined'>
+                {/* <Button onClick={() => setOpen(false)} variant='outlined'>
                     취소
-                </Button>
+                </Button> */}
                 <Button onClick={() => setOpen(false)} variant='contained' color="primary">
                     확인
                 </Button>

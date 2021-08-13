@@ -3,13 +3,17 @@ import { map } from 'lodash';
 
 export const addNotification = async (content) => {
     try{
-        await firebase.firestore().collection('notifications').add({
+        const res = await firebase.firestore().collection('notifications').add({
             content,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
+        console.log(res);
+
+        return ({id: res.id, content});
     }catch(ex){
         console.log('addNotification', ex);
     }
+    return null;
 }
 
 export const loadNotifications = async () => {

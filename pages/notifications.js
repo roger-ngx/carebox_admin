@@ -35,18 +35,6 @@ const columns = [
     }
 ];
 
-const rows = [
-    { id: 100, content: '전체 공지입니다. 아이디어 등록하실 때 꼭 스캠퍼 기법을 사용해 주세요!', registrationDate: '2021.04.26 14:33' },
-    { id: 101, content: '전체 공지입니다. 아이디어 등록하실 때 꼭 스캠퍼 기법을 사용해 주세요!', registrationDate: '2021.04.26 14:33' },
-    { id: 102, content: '전체 공지입니다. 아이디어 등록하실 때 꼭 스캠퍼 기법을 사용해 주세요!', registrationDate: '2021.04.26 14:33' },
-    { id: 103, content: '전체 공지입니다. 아이디어 등록하실 때 꼭 스캠퍼 기법을 사용해 주세요!', registrationDate: '2021.04.26 14:33' },
-    { id: 104, content: '전체 공지입니다. 아이디어 등록하실 때 꼭 스캠퍼 기법을 사용해 주세요!', registrationDate: '2021.04.26 14:33' },
-    { id: 105, content: '전체 공지입니다. 아이디어 등록하실 때 꼭 스캠퍼 기법을 사용해 주세요!', registrationDate: '2021.04.26 14:33' },
-    { id: 106, content: '전체 공지입니다. 아이디어 등록하실 때 꼭 스캠퍼 기법을 사용해 주세요!', registrationDate: '2021.04.26 14:33' },
-    { id: 107, content: '전체 공지입니다. 아이디어 등록하실 때 꼭 스캠퍼 기법을 사용해 주세요!', registrationDate: '2021.04.26 14:33' },
-    { id: 108, content: '전체 공지입니다. 아이디어 등록하실 때 꼭 스캠퍼 기법을 사용해 주세요!', registrationDate: '2021.04.26 14:33' },
-];
-
 const NotificationListPage = () => {
 
     const [ openNotificationMaking, setOpenNotificationMaking ] = useState(false);
@@ -102,7 +90,13 @@ const NotificationListPage = () => {
                 <NotificationMakingDialog
                     open={openNotificationMaking}
                     setOpen={setOpenNotificationMaking}
-                    onSuccess={newNotification => setNotifications([newNotification, ...notifications])}
+                    onSuccess={newNotification => {
+                        if(newNotification){
+                            setNotifications([newNotification, ...notifications]);
+                        }else{
+                            alert('failed');
+                        }
+                    }}
                 />
             }
         </Layout>

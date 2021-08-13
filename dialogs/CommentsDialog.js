@@ -53,8 +53,7 @@ const Comment = ({comment, onOpenReplies}) => {
         <TableCell align="left" style={{verticalAlign: 'top'}}>
             <a
                 style={{padding: 8, backgroundColor: '#1379FF', color: 'white', cursor:'pointer'}}
-                onClick={() => onOpenReplies(replies)}
-                disabled={replies.length===0}
+                onClick={() => replies.length && onOpenReplies(replies)}
             >
                 댓글 {replies.length}개 보기 
             </a>
@@ -106,9 +105,9 @@ const CommentsDialog = ({open, setOpen, comments}) => {
                 </TableContainer>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setOpen(false)} variant='outlined'>
+                {/* <Button onClick={() => setOpen(false)} variant='outlined'>
                     취소
-                </Button>
+                </Button> */}
                 <Button onClick={() => setOpen(false)} variant='contained' color="primary">
                     확인
                 </Button>

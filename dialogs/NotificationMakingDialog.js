@@ -8,6 +8,7 @@ import { TextField, CircularProgress } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/styles';
 import { addNotification } from '../firebase/notifications';
 import { isEmpty, trim } from 'lodash';
+import moment from 'moment';
 
 const Input = withStyles(theme => ({
     root: {
@@ -31,8 +32,11 @@ const NotificationMakingDialog = ({open, setOpen, onSuccess}) => {
     const addNewNotification = async () => {
         setProcessing(true);
         try{
-            await addNotification(notificationContent);
-            onSuccess && onSuccess(notificationContent);
+            const data = await addNotification(notificationContent);
+            data.registrationDate = moment().format('YYYY.MM.DD HH:mm').toString();
+            console.log('addNewNotification', data);
+
+            onSuccess && onSuccess(data);
             setOpen(false);
         }catch(ex){
             console.log(ex);

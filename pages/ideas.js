@@ -81,7 +81,8 @@ const IdeaListPage = () => {
                 registrationDate: row.registrationDate,
                 pickedUsers: row.pickedUsers,
                 owner: row.owner,
-                detail: row.detail
+                detail: row.detail,
+                rating: row.rating
             });
         });
 

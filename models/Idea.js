@@ -39,6 +39,10 @@ export class Idea{
     }
 
     get pickedUsers(){
-        return filter(this.idea.pickes, pick => pick.status === 'ACCEPTED_TO_PICK').join(', ');
+        return filter(this.idea.pickes, pick => pick.status === 'ACCEPTED_TO_PICK');
+    }
+
+    get rating(){
+        return this.idea.rating;
     }
 }

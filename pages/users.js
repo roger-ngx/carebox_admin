@@ -13,12 +13,12 @@ import { User } from '../models/User';
 
 const columns = [
     { field: 'id', headerName: '번호', width: 300 },
-    {
-      field: 'pick',
-      headerName: 'pick 여부',
-      width: 100,
-      editable: true,
-    },
+    // {
+    //   field: 'pick',
+    //   headerName: 'pick 여부',
+    //   width: 100,
+    //   editable: true,
+    // },
     {
       field: 'nickName',
       headerName: '닉네임',
@@ -106,7 +106,7 @@ const UserListPage = () => {
 
             return ({
                 id: row.uid,
-                pick: 'pick',
+                // pick: 'pick',
                 nickName: row.nickName,
                 gender: row.gender,
                 yearsOnJob: row.yearsOnJob,
@@ -130,13 +130,13 @@ const UserListPage = () => {
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
                     <span style={{fontSize: 26, fontWeight: 'bold'}}>회원 리스트</span>
                     <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        <FormControlLabel
+                        {/* <FormControlLabel
                             value="start"
                             control={<Switch color="primary" />}
                             label="pick된 회원만 보기"
                             labelPlacement="start"
                             style={{marginRight: 16}}
-                        />
+                        /> */}
                         <CBSelect containerStyle={{marginRight: 8}}/>
                         <SearchInput />
                     </div>

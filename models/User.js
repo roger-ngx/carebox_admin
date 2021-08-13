@@ -17,6 +17,10 @@ export class User{
         return this.user.gender;
     }
 
+    get grade(){
+        return this.user.grade;
+    }
+
     get yearsOnJob(){
         return this.user.yearsOnJob;
     }

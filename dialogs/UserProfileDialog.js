@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { DataGrid } from '@material-ui/data-grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -10,11 +9,13 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
+import UserGrade from '../components/UserGrade';
 
-const UserProfileDialog = ({data, open, setOpen}) => {
+const UserProfileDialog = ({data, open, setOpen, onUpdateGrade}) => {
     if(!data) return null;
 
-    const { nickName, gender, phoneNumber, yearsOnJob, department, lastLoginTime, registeredIdeaCount, registeredCommentCount } = data;
+    const { id, grade, nickName, gender, phoneNumber, yearsOnJob, department, lastLoginTime, registeredIdeaCount, registeredCommentCount } = data;
+
     return (
         <Dialog maxWidth='lg' open={open} onClose={() => setOpen(false)} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">회원 정보</DialogTitle>
@@ -42,15 +43,7 @@ const UserProfileDialog = ({data, open, setOpen}) => {
                             </div>
                         </div>
 
-                        <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 16}}>
-                            <div style={{display: 'flex', flexDirection: 'row', marginRight: 16}}>
-                                <span style={{color: '#797979', marginRight: 4}}>회원 등급</span>
-                                <span>새싹</span>
-                            </div>
-                            <div style={{backgroundColor: '#1379FF', padding: 4}}>
-                                <span style={{color: 'white'}}>등급 up</span>
-                            </div>
-                        </div>
+                        <UserGrade grade={grade} uid={id} onSuccess={onUpdateGrade}/>
                     </div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'column', borderTopWidth: 1, borderTopStyle: 'solid', borderTopColor: '#BEBEBE', padding: '20px 0'}}>
@@ -60,9 +53,9 @@ const UserProfileDialog = ({data, open, setOpen}) => {
                 
             </DialogContent>
             <DialogActions style={{padding: '16px 24px'}}>
-                <Button onClick={() => setOpen(false)} variant='outlined' style={{width: 100}}>
+                {/* <Button onClick={() => setOpen(false)} variant='outlined' style={{width: 100}}>
                     취소
-                </Button>
+                </Button> */}
                 <Button onClick={() => setOpen(false)} variant='contained' color="primary" style={{width: 100}}>
                     확인
                 </Button>

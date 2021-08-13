@@ -25,7 +25,7 @@ export const getUserById = async (uid) => {
         const ret = await firebase.firestore().collection('users').doc(uid).get();
         return ({uid: ret.id,  ...ret.data()});
     }catch(ex){
-        console.log('getUsers', ex);
+        console.log('getUserById', ex);
     }
     return [];
 };
@@ -38,7 +38,19 @@ export const changeUserGrade = async (uid, grade) => {
         });
         return true;
     }catch(ex){
-        console.log('getUsers', ex);
+        console.log('changeUserGrade', ex);
     }
     return false;
+}
+
+export const getUserRegisteredIdeasAndComments = async (uid) => {
+    try{
+        const comments = await firebase.firestore().collection('history').doc(uid).collection('comments').get();
+
+        const ideas = await firebase.firestore().collection('ideas').where('ownerId', '==', uid).get();
+
+        return ({comments: comments.docs.length,  ideas: ideas.docs.length});
+    }catch(ex){
+        console.log('getUserRegisteredIdeasAndComments', ex);
+    }
 }

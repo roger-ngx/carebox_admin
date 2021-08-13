@@ -62,7 +62,7 @@ const CommentRepliesDialog = ({replies, open, setOpen}) => {
                                         <UserProfileTableCell user={reply.owner}/>
                                     </TableCell>
                                     <TableCell align="left" style={{verticalAlign: 'top'}}>
-                                        <span>{reply.comment}</span>
+                                        <span>{reply.reply}</span>
                                     </TableCell>
                                 </TableRow>
                             ))

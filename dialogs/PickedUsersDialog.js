@@ -13,7 +13,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { map } from 'lodash';
 import { Close, ArrowBackIos } from '@material-ui/icons';
-import { IconButton } from '@material-ui/core';
+import { IconButton, DialogTitle } from '@material-ui/core';
 
 import UserProfileTableCell from '../components/UserProfileTableCell';
 import UserProfileDialog from './UserProfileDialog';

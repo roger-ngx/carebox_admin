@@ -15,6 +15,7 @@ import { IconButton, CircularProgress } from '@material-ui/core';
 import PickedUsersDialog from './PickedUsersDialog';
 import { getIdeaComments } from '../firebase/ideas';
 import { changeUserGrade, getUserById } from '../firebase/users';
+import { User } from '../models/User';
 
 
 const Item = ({leftText, rightText}) => (
@@ -84,7 +85,7 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
 
     const loadIdeaOwner = async (uid) => {
         const user = await getUserById(uid);
-        setIdeaOwner(user);
+        setIdeaOwner(new User(user));
         setUserGrade(user.grade);
     }
 
@@ -122,13 +123,13 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                                     </div>
                                 </div>
                                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 16}}>
-                                    <div style={{display: 'flex', flexDirection: 'row', marginRight: 24}}>
+                                    {/* <div style={{display: 'flex', flexDirection: 'row', marginRight: 24}}>
                                         <span style={{color: '#797979', marginRight: 4}}>유입 경로</span>
                                         <span>앱스토어</span>
-                                    </div>
+                                    </div> */}
                                     <div style={{display: 'flex', flexDirection: 'row'}}>
                                         <span style={{color: '#797979', marginRight: 4}}>최근 접속</span>
-                                        <span>21.03.02 17:00</span>
+                                        <span>{ideaOwner.lastLoginTime}</span>
                                     </div>
                                 </div>
     

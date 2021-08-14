@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import { join, throttle, size, reduce } from 'lodash';
+import { join, throttle, size, reduce, map, keys, values } from 'lodash';
 
 import { ArrowForwardIos, Category, Star } from '@material-ui/icons';
 import CommentsDialog from './CommentsDialog';
@@ -99,6 +99,9 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
         setLoading(false);
     }
 
+
+    const solution = join(map(keys(detail.solution), (key, index) => `${key}: ${values(detail.solution)[index]}`), '\n');
+
     return (
         <>
         <Dialog maxWidth='lg' open={open} onClose={() => setOpen(false)} aria-labelledby="form-dialog-title">
@@ -177,7 +180,7 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                             />
                             <Item
                                 leftText='해결 방법'
-                                rightText={join(detail.solution, '\n')}
+                                rightText={solution}
                             />
                             <Divider />
     

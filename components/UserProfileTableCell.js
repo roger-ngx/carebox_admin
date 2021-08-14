@@ -1,5 +1,5 @@
 import React from 'react';
-
+    
 const UserProfileTableCell = ({user}) => {
     if(!user) return null;
 

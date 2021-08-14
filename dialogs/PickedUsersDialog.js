@@ -1,30 +1,21 @@
 import React from 'react';
 import { useState } from 'react';
-import Image from 'next/image'
-import { DataGrid } from '@material-ui/data-grid';
-import { Rating } from '@material-ui/lab';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { map } from 'lodash';
-
 import { Close, ArrowBackIos } from '@material-ui/icons';
-import UserProfileTableCell from '../components/UserProfileTableCell';
 import { IconButton } from '@material-ui/core';
+
+import UserProfileTableCell from '../components/UserProfileTableCell';
 import UserProfileDialog from './UserProfileDialog';
 
 const useStyles = makeStyles({
@@ -74,9 +65,9 @@ const PickedUsersDialog = ({users, open, setOpen}) => {
                 </TableContainer>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setOpen(false)} variant='outlined'>
+                {/* <Button onClick={() => setOpen(false)} variant='outlined'>
                     취소
-                </Button>
+                </Button> */}
                 <Button onClick={() => setOpen(false)} variant='contained' color="primary">
                     확인
                 </Button>

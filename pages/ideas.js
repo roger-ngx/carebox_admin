@@ -19,19 +19,19 @@ const columns = [
       field: 'ideaType',
       headerName: '아이디어 구분',
       width: 150,
-      editable: true,
+      editable: false,
     },
     {
       field: 'nickName',
       headerName: '닉네임',
       width: 150,
-      editable: true,
+      editable: false,
     },
     {
       field: 'category',
       headerName: '카테고리',
       width: 110,
-      editable: true,
+      editable: false,
     },
     {
       field: 'subject',
@@ -42,19 +42,19 @@ const columns = [
         field: 'scampers',
         headerName: 'scampers',
         width: 250,
-        editable: true,
+        editable: false,
     },
     {
         field: 'registrationDate',
         headerName: '등록일',
         width: 250,
-        editable: true,
+        editable: false,
     },
     {
         field: 'pickedUsernames',
         headerName: 'pick된 회원',
         width: 250,
-        editable: true,
+        editable: false,
     },   
 ];
 

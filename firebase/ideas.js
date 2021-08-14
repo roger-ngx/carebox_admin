@@ -11,6 +11,36 @@ export const getIdeas = async () => {
     return [];
 };
 
+//+82
+export const getIdeasByOwnerPhonenumber = async (phoneNumber) => {
+    if(!phoneNumber) return;
+
+    phoneNumber = phoneNumber.replace('0', '+82');
+    try{
+        const ret = await firebase.firestore().collection('ideas')
+            .where('owner.phoneNumber', '==', phoneNumber)
+            .orderBy('createdAt', 'desc').get();
+
+        return map(ret.docs, doc => ({id: doc.id,  ...doc.data()}));
+    }catch(ex){
+        console.log('getIdeasByOwnerPhonenumber', ex);
+    }
+    return [];
+}
+
+export const getIdeasByOwnerNickname = async (nickName) => {
+    try{
+        const ret = await firebase.firestore().collection('ideas')
+            .where('owner.nickName', '==', nickName)
+            .orderBy('createdAt', 'desc').get();
+
+        return map(ret.docs, doc => ({id: doc.id,  ...doc.data()}));
+    }catch(ex){
+        console.log('getIdeasByOwnerPhonenumber', ex);
+    }
+    return [];
+}
+
 export const getIdeaComments = async ideaId => {
     console.log('idea', ideaId);
     if(!ideaId) return [];

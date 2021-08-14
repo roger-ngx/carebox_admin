@@ -43,6 +43,9 @@ export const getUsersByNickname = async (nickName) => {
 };
 
 export const getUsersByPhonenumber = async (phoneNumber) => {
+    if(!phoneNumber) return;
+
+    phoneNumber = phoneNumber.replace('0', '+82');
     try{
         const ret = await firebase.firestore().collection('users')
             .where('phoneNumber', '==', phoneNumber).get();

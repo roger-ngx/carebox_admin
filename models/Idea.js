@@ -1,4 +1,4 @@
-import { filter, join } from 'lodash';
+import { filter, join, map } from 'lodash';
 import moment from 'moment';
 
 export class Idea{
@@ -39,7 +39,11 @@ export class Idea{
     }
 
     get pickedUsers(){
-        return filter(this.idea.pickes, pick => pick.status === 'ACCEPTED_TO_PICK');
+        return filter(this.idea.picks, pick => pick.status === 'ACCEPTED_TO_PICK');
+    }
+
+    get pickedUsernames(){
+        return map(this.pickedUsers, pick => pick.nickName);
     }
 
     get rating(){

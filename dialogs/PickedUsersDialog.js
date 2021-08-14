@@ -20,6 +20,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { map } from 'lodash';
 
 import { Close, ArrowBackIos } from '@material-ui/icons';
 import UserProfileTableCell from '../components/UserProfileTableCell';
@@ -32,7 +33,7 @@ const useStyles = makeStyles({
     },
   });
 
-const PickedUsersDialog = ({open, setOpen}) => {
+const PickedUsersDialog = ({users, open, setOpen}) => {
     const classes = useStyles();
 
     const [ openUserProfile, setOpenUserProfile ] = useState(false);
@@ -51,19 +52,23 @@ const PickedUsersDialog = ({open, setOpen}) => {
                 <TableContainer component={Paper}>
                     <Table className={classes.table} aria-label="simple table">
                         <TableBody>
-                            <TableRow>
-                                <TableCell component="th" scope="row" style={{verticalAlign: 'top'}}>
-                                    <UserProfileTableCell />
-                                </TableCell>
-                                <TableCell align="right">
-                                    <a
-                                        style={{padding: 8, backgroundColor: '#1379FF', color: 'white', cursor:'pointer'}}
-                                        onClick={() => setOpenUserProfile(true)}
-                                    >
-                                        프로필 상세
-                                    </a>
-                                </TableCell>
-                            </TableRow>
+                            {
+                                map( users, user => (
+                                    <TableRow>
+                                        <TableCell component="th" scope="row" style={{verticalAlign: 'top'}}>
+                                            <UserProfileTableCell user={user}/>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <a
+                                                style={{padding: 8, backgroundColor: '#1379FF', color: 'white', cursor:'pointer'}}
+                                                onClick={() => setOpenUserProfile(true)}
+                                            >
+                                                프로필 상세
+                                            </a>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            }
                         </TableBody>
                     </Table>
                 </TableContainer>

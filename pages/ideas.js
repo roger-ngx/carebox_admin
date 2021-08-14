@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { DataGrid } from '@material-ui/data-grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import { map, compact, size } from 'lodash';
+import { map, compact, size, join } from 'lodash';
 
 import CBSelect from '../components/CBSelect';
 import Layout from '../components/Layout';
@@ -51,7 +51,7 @@ const columns = [
         editable: true,
     },
     {
-        field: 'pickedUsers',
+        field: 'pickedUsernames',
         headerName: 'pick된 회원',
         width: 250,
         editable: true,
@@ -84,6 +84,7 @@ const IdeaListPage = () => {
                 scampers: row.scampers,
                 registrationDate: row.registrationDate,
                 pickedUsers: row.pickedUsers,
+                pickedUsernames: join(row.pickedUsernames, ', '),
                 owner: row.owner,
                 detail: row.detail,
                 rating: row.rating

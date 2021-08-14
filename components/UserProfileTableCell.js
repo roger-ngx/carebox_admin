@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 
 const UserProfileTableCell = ({user}) => {
     if(!user) return null;
@@ -7,7 +6,7 @@ const UserProfileTableCell = ({user}) => {
     return (
         <div style={{display: 'flex', flexDirection: 'row'}}>
             <div style={{width: 60, height: 60, marginRight: 16}}>
-                <Image src='/assets/icons/ic_profile.png' width={60} height={60} alt=''/>
+                <img src={user.profileImageUrl || '/assets/icons/ic_profile.png'} width={60} height={60} alt=''/>
             </div>
             <div style={{display: 'flex', flexDirection: 'column'}}>
                 <span style={{fontSize: 18, fontWeight: 'bold'}}>{user.nickName}</span>

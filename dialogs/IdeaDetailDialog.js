@@ -260,7 +260,7 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
         }
         {
             openPickedUsers &&
-            <PickedUsersDialog open={openPickedUsers} setOpen={setOpenPickedUsers} />
+            <PickedUsersDialog users={pickedUsers} open={openPickedUsers} setOpen={setOpenPickedUsers} />
         }
         </>
     )

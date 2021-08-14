@@ -30,6 +30,30 @@ export const getUserById = async (uid) => {
     return [];
 };
 
+export const getUsersByNickname = async (nickName) => {
+    try{
+        const ret = await firebase.firestore().collection('users')
+            .where('nickName', '==', nickName).get();
+
+        return map(ret.docs, doc => ({uid: doc.id,  ...doc.data()}));
+    }catch(ex){
+        console.log('getUserByNickname', ex);
+    }
+    return [];
+};
+
+export const getUsersByPhonenumber = async (phoneNumber) => {
+    try{
+        const ret = await firebase.firestore().collection('users')
+            .where('phoneNumber', '==', phoneNumber).get();
+
+        return map(ret.docs, doc => ({uid: doc.id,  ...doc.data()}));
+    }catch(ex){
+        console.log('getUserByPhonenumber', ex);
+    }
+    return [];
+};
+
 export const changeUserGrade = async (uid, grade) => {
     try{
         await firebase.firestore().collection('users').doc(uid).update({

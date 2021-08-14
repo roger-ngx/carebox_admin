@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import { makeStyles } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core';
@@ -32,24 +33,27 @@ const Select = withStyles(theme => ({
     }
 }))(NativeSelect);
 
-const CBSelect = ({containerStyle}) => {
+const CBSelect = ({onValueChange, containerStyle}) => {
     const classes = useStyles();
 
-    const handleChange = (event) => {
-        const name = event.target.name;
-    };
+    const [ value, setValue ] = useState('nickName')
+;
+    const handleChange = (event) => setValue(event.target.value);
+
+    useEffect(() => {
+        (typeof onValueChange === 'function') && onValueChange(value);
+    }, [value]);
 
     return (
         <Select
-          value='닉네임'
+          value={value}
           onChange={handleChange}
-          name="age"
           IconComponent={ExpandMore}
           className={classes.selectEmpty}
           style={{marginTop: 0, ...containerStyle}}
         >
-          <option style={{padding: 8, minHeight: 20}} value="닉네임">닉네임</option>
-          <option value="휴대폰 번호">휴대폰 번호</option>
+          <option style={{padding: 8, minHeight: 20}} value="nickName">닉네임</option>
+          <option value="phoneNumber">휴대폰 번호</option>
         </Select>
     )
 }

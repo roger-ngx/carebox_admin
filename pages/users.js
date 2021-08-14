@@ -8,8 +8,10 @@ import CBSelect from '../components/CBSelect';
 import Layout from '../components/Layout';
 import SearchInput from '../components/SearchInput';
 import UserProfileDialog from '../dialogs/UserProfileDialog';
-import { getUsers, getUserRegisteredIdeasAndComments } from '../firebase/users';
+import { getUsers, getUserRegisteredIdeasAndComments, getUsersByPhonenumber, getUsersByNickname } from '../firebase/users';
 import { User } from '../models/User';
+import { IconButton } from '@material-ui/core';
+import { Refresh } from '@material-ui/icons';
 
 const columns = [
     { field: 'id', headerName: '번호', width: 300 },
@@ -84,6 +86,8 @@ const UserListPage = () => {
 
     const [ selectedRow, setSelectedRow ] = useState();
 
+    const [ searchingType, setSearchingType ] = useState();
+
 
     useEffect(() => {
         getUsers().then(setUsers);
@@ -124,11 +128,30 @@ const UserListPage = () => {
         setFormattedUser(data);
     }, [users]);
 
+    const searchForUser = async (searchingText) => {
+        let users = [];
+        switch(searchingType){
+            case 'phoneNumber':
+                users = await getUsersByPhonenumber(searchingText);
+                setUsers(users);
+                break;
+            case 'nickName':
+                users = await getUsersByNickname(searchingText);
+                break;
+        }
+        setUsers(users);
+    };
+
     return (
         <Layout>
             <div style={{display: 'flex', flexDirection: 'column', padding: 20, flex: 1}}>
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
-                    <span style={{fontSize: 26, fontWeight: 'bold'}}>회원 리스트</span>
+                    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        <span style={{fontSize: 26, fontWeight: 'bold'}}>회원 리스트</span>
+                        <IconButton onClick={() => getUsers().then(setUsers)}>
+                            <Refresh />
+                        </IconButton>
+                    </div>
                     <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                         {/* <FormControlLabel
                             value="start"
@@ -137,8 +160,8 @@ const UserListPage = () => {
                             labelPlacement="start"
                             style={{marginRight: 16}}
                         /> */}
-                        <CBSelect containerStyle={{marginRight: 8}}/>
-                        <SearchInput />
+                        <CBSelect containerStyle={{marginRight: 8}} onValueChange={setSearchingType}/>
+                        <SearchInput onSearch={searchForUser}/>
                     </div>
                 </div>
                 <div style={{ flex: 1, marginTop: 24 }}>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { withStyles } from '@material-ui/core';
 import InputBase from '@material-ui/core/InputBase';
 import { Search } from '@material-ui/icons';
@@ -21,12 +22,19 @@ const SearchButton = withStyles(theme => ({
     }
 }))(IconButton);
 
-const SearchInput = () => {
+const SearchInput = ({onSearch}) => {
+    const [ searchText, setSearchText ] = useState();
 
     return (
         <div style={{display: 'flex', flexDirection: 'row'}}>
-            <TextInput placeholder='검색어 입력' />
-            <SearchButton>
+            <TextInput
+                value={searchText}
+                onChange={e => setSearchText(e.target.value)}
+                placeholder='검색어 입력'
+            />
+            <SearchButton
+                onClick={() => onSearch(searchText)}
+            >
                 <Search style={{color:'white'}}/>
             </SearchButton>
         </div>

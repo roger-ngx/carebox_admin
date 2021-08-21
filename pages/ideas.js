@@ -2,16 +2,18 @@ import { useState, useEffect } from 'react';
 import { DataGrid } from '@material-ui/data-grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import { map, compact, size, join } from 'lodash';
+import { map, compact, size, join, find, throttle } from 'lodash';
+import { IconButton, Button, CircularProgress } from '@material-ui/core';
+import { Refresh } from '@material-ui/icons';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 
 import CBSelect from '../components/CBSelect';
 import Layout from '../components/Layout';
 import SearchInput from '../components/SearchInput';
 import IdeaDetailDialog from '../dialogs/IdeaDetailDialog';
-import { getIdeas, getIdeasByOwnerPhonenumber, getIdeasByOwnerNickname } from '../firebase/ideas';
+import { getIdeas, getIdeasByOwnerPhonenumber, getIdeasByOwnerNickname, setIdeaVisibility } from '../firebase/ideas';
 import { Idea } from '../models/Idea';
-import { IconButton } from '@material-ui/core';
-import { Refresh } from '@material-ui/icons';
 
 const columns = [
     { field: 'id', headerName: '번호', width: 200 },
@@ -55,7 +57,27 @@ const columns = [
         headerName: 'pick된 회원',
         width: 250,
         editable: false,
-    },   
+    },
+    {
+        field: 'isAvailable',
+        headerName: '공개',
+        width: 150,
+        editable: false,
+        renderCell: (params) => {
+
+            const { value } = params;
+
+            if(value === undefined){
+                return null;
+            };
+
+            return <IconButton>
+                {
+                    params.value ? <VisibilityIcon /> : <VisibilityOffIcon />
+                }
+            </IconButton>
+        }
+    } 
 ];
 
 const IdeaListPage = () => {
@@ -87,7 +109,8 @@ const IdeaListPage = () => {
                 pickedUsernames: join(row.pickedUsernames, ', '),
                 owner: row.owner,
                 detail: row.detail,
-                rating: row.rating
+                rating: row.rating,
+                isAvailable: row.isAvailable
             });
 
             if(!onlyShowPickedIdea || size(row.pickedUsers) > 0){
@@ -111,6 +134,16 @@ const IdeaListPage = () => {
         }
         setIdeas(ideas);
     };
+
+    const currentlySelected = (params, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const {id, value} = params;
+        const idea = find(formattedIdeas, idea => idea.id == id);
+        idea.isAvailable = !value;
+
+        setIdeaVisibility({ideaId: id, isAvailable: !value});
+    }
 
     return (
         <Layout>
@@ -145,6 +178,7 @@ const IdeaListPage = () => {
                             setOpen(true)
                             setSelectedRow(param.row);
                         }}
+                        onCellClick={currentlySelected}
                     />
                 </div>
             </div>

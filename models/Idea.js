@@ -49,4 +49,8 @@ export class Idea{
     get rating(){
         return this.idea.rating;
     }
+
+    get isAvailable(){
+        return this.idea.isAvailable;
+    }
 }

@@ -74,3 +74,37 @@ export const getCommentReplies = async ({ideaId, commentId}) => {
     }
     return [];
 }
+
+export const setIdeaVisibility = async ({ideaId, isAvailable}) => {
+
+    try{
+        await firebase.firestore().collection('ideas')
+            .doc(ideaId)
+            .update({
+                isAvailable,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+        return true;
+    }catch(ex){
+        console.log('setIdeaVisibility', ex);
+    }
+    return false;
+}
+
+export const setIdeaCommentVisibility = async ({ideaId, commentId, isAvailable}) => {
+
+    try{
+        await firebase.firestore().collection('ideas')
+            .doc(ideaId)
+            .collection('comments')
+            .doc(commentId)
+            .update({
+                isAvailable,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+        return true;
+    }catch(ex){
+        console.log('setIdeaCommentVisibility', ex);
+    }
+    return false;
+}

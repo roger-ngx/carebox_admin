@@ -80,7 +80,7 @@ const columns = [
     } 
 ];
 
-const IdeaListPage = () => {
+export default function IdeaListPage(){
 
     const [ open, setOpen ] = useState(false);
     const [ ideas, setIdeas ] = useState();
@@ -188,7 +188,3 @@ const IdeaListPage = () => {
         </Layout>
     )
 }
-
-IdeaListPage.displayName = 'IdeaListPage';
-
-export default IdeaListPage;

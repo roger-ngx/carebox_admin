@@ -35,7 +35,7 @@ const columns = [
     }
 ];
 
-const NotificationListPage = () => {
+export default function NotificationListPage(){
 
     const [ openNotificationMaking, setOpenNotificationMaking ] = useState(false);
     const [ notifications, setNotifications ] = useState([]);
@@ -102,7 +102,3 @@ const NotificationListPage = () => {
         </Layout>
     )
 }
-
-NotificationListPage.displayName = 'NotificationListPage';
-
-export default NotificationListPage;

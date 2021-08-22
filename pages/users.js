@@ -77,7 +77,7 @@ const columns = [
     },   
 ];
 
-const UserListPage = () => {
+export default function UserListPage() {
 
     const [ open, setOpen ] = useState(false);
     const [ users, setUsers ] = useState([]);
@@ -189,7 +189,3 @@ const UserListPage = () => {
         </Layout>
     )
 }
-
-UserListPage.displayName = 'UserListPage';
-
-export default UserListPage;

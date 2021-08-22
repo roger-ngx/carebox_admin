@@ -22,7 +22,7 @@ const Item = ({leftText, rightText}) => (
     <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '12px 0'}}>
         <span style={{width: 120, textAlign: 'right', color: '#878787'}}>{leftText}</span>
         <span style={{color: '#C4C4C4', margin: '0 8px'}}>|</span>
-        <span style={{flex: 1, color: '#323030'}}>{rightText}</span>
+        <span style={{flex: 1, color: '#323030', whiteSpace: 'pre-line'}}>{rightText}</span>
     </div>
 )
 

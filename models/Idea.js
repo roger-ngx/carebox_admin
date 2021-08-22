@@ -31,7 +31,7 @@ export class Idea{
     }
 
     get scampers(){
-        return join(this.idea.scampers, '   ');
+        return join(this.idea.scampers, '\n');
     }
 
     get registrationDate(){

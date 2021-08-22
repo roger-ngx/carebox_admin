@@ -13,12 +13,12 @@ const AppBar = () => {
                 <div style={{marginRight: 16}}>
                     <span>{authUser && authUser.displayName}</span>
                 </div>
-                <div style={{marginRight: 16}}>
+                {/* <div style={{marginRight: 16}}>
                     <span>알림</span>
                 </div>
                 <div>
                     <span>로그아웃</span>
-                </div>
+                </div> */}
             </div>
         </div>
     )

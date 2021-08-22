@@ -14,13 +14,30 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { map } from 'lodash';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 
 import CommentRepliesDialog from './CommentRepliesDialog';
 import UserProfileTableCell from '../components/UserProfileTableCell';
-import { getCommentReplies } from '../firebase/ideas';
+import { getCommentReplies, setIdeaCommentVisibility } from '../firebase/ideas';
+import { IconButton, CircularProgress } from '@material-ui/core';
 
 const Comment = ({comment, onOpenReplies}) => {
     const [ replies, setReplies ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
+
+    const [ isAvailable, setAvailable ] = useState(comment.isAvailable);
+
+    const setVisibility = async () => {
+        setLoading(true);
+        const ret = await setIdeaCommentVisibility({
+            ideaId: comment.ideaId,
+            commentId: comment.id,
+            isAvailable: !isAvailable
+        });
+        setAvailable(!isAvailable);
+        setLoading(false);
+    };
 
     useEffect(() => {
         if(comment){
@@ -58,6 +75,17 @@ const Comment = ({comment, onOpenReplies}) => {
                 댓글 {replies.length}개 보기 
             </a>
         </TableCell>
+        <TableCell>
+            {
+                loading ? <CircularProgress size={24} color='primary' />
+                :
+                <IconButton onClick={setVisibility}>
+                    {
+                        isAvailable ? <VisibilityIcon /> : <VisibilityOffIcon />
+                    }
+                </IconButton>
+            }
+        </TableCell>
     </TableRow>)
 }
 
@@ -80,13 +108,14 @@ const CommentsDialog = ({open, setOpen, comments}) => {
                 <TableContainer component={Paper}>
                     <Table className={classes.table} aria-label="simple table">
                         <TableHead>
-                        <TableRow>
-                            <TableCell>회원정보</TableCell>
-                            <TableCell align="left">평점</TableCell>
-                            <TableCell align="left">scamper기법</TableCell>
-                            <TableCell align="left">코멘트</TableCell>
-                            <TableCell align="left">댓글</TableCell>
-                        </TableRow>
+                            <TableRow>
+                                <TableCell>회원정보</TableCell>
+                                <TableCell align="left">평점</TableCell>
+                                <TableCell align="left">scamper기법</TableCell>
+                                <TableCell align="left">코멘트</TableCell>
+                                <TableCell align="left">댓글</TableCell>
+                                <TableCell align="left">공개</TableCell>
+                            </TableRow>
                         </TableHead>
                         <TableBody>
                             {

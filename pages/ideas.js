@@ -136,13 +136,15 @@ const IdeaListPage = () => {
     };
 
     const currentlySelected = (params, e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const {id, value} = params;
-        const idea = find(formattedIdeas, idea => idea.id == id);
-        idea.isAvailable = !value;
-
-        setIdeaVisibility({ideaId: id, isAvailable: !value});
+        const {id, value, field} = params;
+        if(field==='isAvailable'){
+            e.preventDefault();
+            e.stopPropagation();
+            const idea = find(formattedIdeas, idea => idea.id == id);
+            idea.isAvailable = !value;
+    
+            setIdeaVisibility({ideaId: id, isAvailable: !value});
+        }
     }
 
     return (

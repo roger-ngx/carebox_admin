@@ -25,12 +25,45 @@ import { map } from 'lodash';
 import { Close } from '@material-ui/icons';
 import UserProfileTableCell from '../components/UserProfileTableCell';
 import { IconButton } from '@material-ui/core';
+import { setCommentReplyVisibility } from '../firebase/ideas';
 
 const useStyles = makeStyles({
     table: {
       minWidth: 500,
     },
   });
+
+const Reply = ({reply}) => {
+
+    if(!reply) return null;
+
+    const { id, ideaId, commentId, owner } = reply;
+
+    const [ isAvailable, setAvailable ] = useState();
+
+    const setVisibility = async () => {
+        setLoading(true);
+        const ret = await setCommentReplyVisibility({
+            ideaId,
+            commentId,
+            replyId: id,
+            isAvailable: !isAvailable
+        });
+        setAvailable(!isAvailable);
+        setLoading(false);
+    };
+
+    return (
+        <TableRow>
+            <TableCell component="th" scope="row" style={{verticalAlign: 'top'}}>
+                <UserProfileTableCell user={owner}/>
+            </TableCell>
+            <TableCell align="left" style={{verticalAlign: 'top'}}>
+                <span>{reply.reply}</span>
+            </TableCell>
+        </TableRow>
+    )
+}
 
 const CommentRepliesDialog = ({replies, open, setOpen}) => {
     const classes = useStyles();
@@ -56,16 +89,7 @@ const CommentRepliesDialog = ({replies, open, setOpen}) => {
                         </TableHead>
                         <TableBody>
                         {
-                            map(replies, reply => (
-                                <TableRow>
-                                    <TableCell component="th" scope="row" style={{verticalAlign: 'top'}}>
-                                        <UserProfileTableCell user={reply.owner}/>
-                                    </TableCell>
-                                    <TableCell align="left" style={{verticalAlign: 'top'}}>
-                                        <span>{reply.reply}</span>
-                                    </TableCell>
-                                </TableRow>
-                            ))
+                            map(replies, reply => (<Reply key={reply.id} reply={reply} />))
                         }
                         </TableBody>
                     </Table>

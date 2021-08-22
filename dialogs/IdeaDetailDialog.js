@@ -49,7 +49,7 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
             getIdeaComments(id).then(setComments);
             setUserGrade(owner.grade);
         }
-    }, [id]);
+    });
 
     useEffect(() => {
         if(owner.uid){

@@ -108,3 +108,23 @@ export const setIdeaCommentVisibility = async ({ideaId, commentId, isAvailable})
     }
     return false;
 }
+
+export const setCommentReplyVisibility = async ({ideaId, commentId, replyId, isAvailable}) => {
+
+    try{
+        await firebase.firestore().collection('ideas')
+            .doc(ideaId)
+            .collection('comments')
+            .doc(commentId)
+            .collection('replies')
+            .doc(replyId)
+            .update({
+                isAvailable,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+        return true;
+    }catch(ex){
+        console.log('setIdeaCommentVisibility', ex);
+    }
+    return false;
+}

@@ -26,7 +26,7 @@ const Comment = ({comment, onOpenReplies}) => {
     const [ replies, setReplies ] = useState([]);
     const [ loading, setLoading ] = useState(false);
 
-    const [ isAvailable, setAvailable ] = useState(comment.isAvailable);
+    const [ isAvailable, setAvailable ] = useState();
 
     const setVisibility = async () => {
         setLoading(true);
@@ -42,8 +42,9 @@ const Comment = ({comment, onOpenReplies}) => {
     useEffect(() => {
         if(comment){
             getCommentReplies({ideaId: comment.ideaId, commentId: comment.id}).then(setReplies);
+            setAvailable(comment.isAvailable);
         }
-    }, [comment]);
+    });
 
     return (<TableRow>
         <TableCell component="th" scope="row" style={{verticalAlign: 'top'}}>

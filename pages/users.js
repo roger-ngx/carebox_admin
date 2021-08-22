@@ -190,4 +190,6 @@ const UserListPage = () => {
     )
 }
 
+UserListPage.displayName = 'UserListPage';
+
 export default UserListPage;

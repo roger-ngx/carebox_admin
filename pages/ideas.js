@@ -189,4 +189,6 @@ const IdeaListPage = () => {
     )
 }
 
+IdeaListPage.displayName = 'IdeaListPage';
+
 export default IdeaListPage;

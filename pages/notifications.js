@@ -103,4 +103,6 @@ const NotificationListPage = () => {
     )
 }
 
+NotificationListPage.displayName = 'NotificationListPage';
+
 export default NotificationListPage;

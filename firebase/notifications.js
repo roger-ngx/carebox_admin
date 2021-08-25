@@ -5,7 +5,9 @@ export const addNotification = async (content) => {
     try{
         const res = await firebase.firestore().collection('notifications').add({
             content,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            type: 'ADMIN',
+            available: true
         });
         console.log(res);
 

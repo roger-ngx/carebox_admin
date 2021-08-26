@@ -1,22 +1,14 @@
 import { useState, useEffect } from 'react';
-import Image from 'next/image'
 import { DataGrid } from '@material-ui/data-grid';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
 import moment from 'moment';
 import { map } from 'lodash';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import { IconButton } from '@material-ui/core';
 
 import CBSelect from '../components/CBSelect';
 import Layout from '../components/Layout';
 import SearchInput from '../components/SearchInput';
-import UserProfileDialog from '../dialogs/UserProfileDialog';
-import NotificationMakingDialog from '../dialogs/NotificationMakingDialog';
 import { loadNotifications } from '../firebase/notifications';
 
 const columns = [
@@ -25,13 +17,33 @@ const columns = [
         field: 'content',
         headerName: '내용',
         flex: 1,
-        editable: true,
+        editable: false,
     },
     {
         field: 'registrationDate',
         headerName: '등록일',
         width: 200,
-        editable: true,
+        editable: false,
+    },
+    {
+        field: 'available',
+        headerName: '공개',
+        width: 200,
+        editable: false,
+        renderCell: (params) => {
+
+            const { value } = params;
+
+            if(value === undefined){
+                return null;
+            };
+
+            return <IconButton>
+                {
+                    value ? <VisibilityIcon /> : <VisibilityOffIcon />
+                }
+            </IconButton>
+        }
     }
 ];
 
@@ -48,10 +60,11 @@ export default function NotificationListPage(){
         try{
             const data = await loadNotifications();
             setNotifications(map(data, 
-                ({id, content, createdAt}) => ({
+                ({id, content, createdAt, available}) => ({
                     id,
                     content,
-                    registrationDate: moment.unix(createdAt.seconds).format('YYYY.MM.DD HH:mm').toString()
+                    registrationDate: moment.unix(createdAt.seconds).format('YYYY.MM.DD HH:mm').toString(),
+                    available
                 })
             ));
         }catch(ex){

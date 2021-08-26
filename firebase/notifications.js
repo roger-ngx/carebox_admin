@@ -27,3 +27,19 @@ export const loadNotifications = async () => {
         console.log('addNotification', ex);
     }
 }
+
+export const setNotificationVisibility = async ({notificationId, available}) => {
+
+    try{
+        await firebase.firestore().collection('notifications')
+            .doc(notificationId)
+            .update({
+                available,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+        return true;
+    }catch(ex){
+        console.log('setNotificationVisibility', ex);
+    }
+    return false;
+};

@@ -105,9 +105,9 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
     const getUserGrade = (userGrade) => {
         switch(userGrade){
             case 1: return '새싹';
-            case 1: return '나무';
-            case 1: return '숲';
-            case 1: return '왕관';
+            case 2: return '나무';
+            case 3: return '숲';
+            case 4: return '왕관';
         }
     }
 

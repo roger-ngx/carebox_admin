@@ -92,14 +92,24 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
     const changeGrade = async () => {
         setLoading(true);
         try{
-            await changeUserGrade(owner.uid, userGrade===1?2:1)
-            setUserGrade(userGrade===1?2:1);
+            const nextGrade = userGrade===4?1:(userGrade+1);
+
+            await changeUserGrade(owner.uid, nextGrade)
+            setUserGrade(nextGrade);
         }catch(ex){
             console.log('changeGrade', ex);
         }
         setLoading(false);
     }
 
+    const getUserGrade = (userGrade) => {
+        switch(userGrade){
+            case 1: return '새싹';
+            case 1: return '나무';
+            case 1: return '숲';
+            case 1: return '왕관';
+        }
+    }
 
     const solution = join(map(keys(detail.solution), (key, index) => `${key}: ${values(detail.solution)[index]}`), '\n');
 
@@ -136,7 +146,7 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 16}}>
                                     <div style={{display: 'flex', flexDirection: 'row', marginRight: 16}}>
                                         <span style={{color: '#797979', marginRight: 4}}>회원 등급</span>
-                                        <span>{userGrade === 1 ? '새싹' : '왕관'}</span>
+                                        <span>{getUserGrade(userGrade)}</span>
                                     </div>
                                     <div
                                         style={{cursor: 'pointer', backgroundColor: '#1379FF', padding: 4, width: 80, textAlign: 'center'}}
@@ -146,7 +156,7 @@ const IdeaDetailDialog = ({data, open, setOpen}) => {
                                             loading ?
                                             <CircularProgress size={12} style={{color:'#fff'}} />
                                             :
-                                            <span style={{color: 'white'}}>{userGrade === 1 ? '등급 up' : '등급 down'}</span>
+                                            <span style={{color: 'white'}}>{userGrade < 4 ? '등급 up' : '등급 down'}</span>
                                         }
                                     </div>
                                 </div>

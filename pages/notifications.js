@@ -10,6 +10,7 @@ import CBSelect from '../components/CBSelect';
 import Layout from '../components/Layout';
 import SearchInput from '../components/SearchInput';
 import { loadNotifications } from '../firebase/notifications';
+import NotificationMakingDialog from '../dialogs/NotificationMakingDialog';
 
 const columns = [
     { field: 'id', headerName: '번호', width: 200 },

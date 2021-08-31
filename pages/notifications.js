@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataGrid } from '@material-ui/data-grid';
 import moment from 'moment';
-import { map } from 'lodash';
+import { map, find } from 'lodash';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { IconButton } from '@material-ui/core';
@@ -75,6 +75,7 @@ export default function NotificationListPage(){
 
     const currentlySelected = (params, e) => {
         const {id, value, field} = params;
+        // console.log(id, value, field);
         if(field==='available'){
             e.preventDefault();
             e.stopPropagation();

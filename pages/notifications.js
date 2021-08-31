@@ -9,7 +9,7 @@ import { IconButton } from '@material-ui/core';
 import CBSelect from '../components/CBSelect';
 import Layout from '../components/Layout';
 import SearchInput from '../components/SearchInput';
-import { loadNotifications } from '../firebase/notifications';
+import { loadNotifications, setNotificationVisibility } from '../firebase/notifications';
 import NotificationMakingDialog from '../dialogs/NotificationMakingDialog';
 
 const columns = [
@@ -73,6 +73,18 @@ export default function NotificationListPage(){
         }
     };
 
+    const currentlySelected = (params, e) => {
+        const {id, value, field} = params;
+        if(field==='available'){
+            e.preventDefault();
+            e.stopPropagation();
+            const notification = find(notifications, noti => noti.id == id);
+            notification.available = !value;
+    
+            setNotificationVisibility({notificationId: id, available: !value});
+        }
+    }
+
     return (
         <Layout>
             <div style={{display: 'flex', flexDirection: 'column', padding: 20, flex: 1}}>
@@ -96,6 +108,7 @@ export default function NotificationListPage(){
                         rows={notifications}
                         columns={columns}
                         pageSize={10}
+                        onCellClick={currentlySelected}
                     />
                 </div>
             </div>

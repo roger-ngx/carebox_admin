@@ -36,7 +36,7 @@ export const setNotificationVisibility = async ({notificationId, available}) => 
             .update({
                 available,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            })
+            });
         return true;
     }catch(ex){
         console.log('setNotificationVisibility', ex);
